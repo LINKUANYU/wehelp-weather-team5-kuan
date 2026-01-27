@@ -1,3 +1,9 @@
+"""
+氣象屬api資料 鄉鎮天氣預報－台灣未來3天天氣預報 v1/rest/datastore/F-D0047-089
+目標：ElementName 抓每小時溫度資料
+注意：發現資料在36小時候，資料開始變成每3小時一筆
+"""
+
 import requests
 import os
 from dotenv import load_dotenv

@@ -3,3 +3,5 @@ mysql-connector-python
 fastapi
 uvicorn
 python-dotenv
+# scheduler 排程器
+apscheduler

@@ -1,65 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>可愛狗狗 | 天氣預報</title>
-	<!-- 建立整體樣式指導：基礎字型、字體、基底色、標題、段落樣式等等 -->
-	<link rel="stylesheet" type="text/css" href="static/css/common.css" />
-	<!-- 區域樣式 -->
-	<link rel="stylesheet" type="text/css" href="static/css/nav.css" />
-	<link rel="stylesheet" type="text/css" href="static/css/weather.css" />
-	<link rel="stylesheet" type="text/css" href="static/css/map.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>可愛狗狗 | 天氣預報</title>
+    <!-- 建立整體樣式指導：基礎字型、字體、基底色、標題、段落樣式等等 -->
+    <link rel="stylesheet" type="text/css" href="static/css/common.css" />
+    <!-- 區域樣式 -->
+    <link rel="stylesheet" type="text/css" href="static/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/weather.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/map.css" />
 
-	<script type="module" src="/static/js/index.js"></script>
-	<!-- 第三方套件 -->
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
-</head>
-<body>
-	<!-- 導覽列 -->
-	<div id="nav"></div>
+    <script type="module" src="/static/js/index.js"></script>
+    <!-- 第三方套件 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <!-- 導覽列 -->
+    <div id="nav"></div>
 
-	<div id="main-container">
-		<!-- 天氣資訊區塊 (縣市、今明兩天天氣、每小時天氣圖表) -->
-		<div id="weather-container" class="weather-container">
-			<div id="city" class="city weather-card">
-				<div>
-					<div class="city-title" id="city-name"></div>
-					<div class="city-date" id="city-date"></div>
-					<div class="city-subtitle">六都天氣預報</div>
-					<div class="city-btn" id="dc-btn">DC傳送！</div>
-				</div>
-				<div class="city-card-item">
-					<div class="weather-time"><span id="weather-first-min-time"></span> ~ <span id="weather-first-max-time"></span></div>
-					<div class="city-state-icon"><img src="static/img/cloudy.png" alt="cloudy" id="weather-first-icon"></div>
-					<div class="weather-temperature"><span id="weather-first-min-temp"></span> ~ <span id="weather-first-max-temp"></span>&deg;C</div>
-					<div class="weather-rainfall"><img src="" alt=""> 50%</div>
-				</div>
-			</div>
-			<div id="weather" class="weather weather-card">
-				<div class="weather-card-item">
-					<div class="weather-title">今晚明晨</div>
-					<div class="weather-time"><span id="weather-second-min-time"></span> ~ <span id="weather-second-max-time"></span></div>
-					<div class="weather-state-icon"><img src="static/img/cloudy.png" alt="" id="weather-second-icon"></div>
-					<div class="weather-temperature"><span id="weather-second-min-temp"></span> ~ <span id="weather-second-max-temp"></span>&deg;C</div>
-					<div class="weather-rainfall"><img src="" alt=""> 50%</div>
-				</div>
-				<div class="weather-bar"></div>
-				<div class="weather-card-item">
-					<div class="weather-title">明日白天</div>
-					<div class="weather-time"><span id="weather-third-min-time"></span> ~ <span id="weather-third-max-time"></span></div>
-					<div class="weather-state-icon"><img src="static/img/cloudy.png" alt="" id="weather-third-icon"></div>
-					<div class="weather-temperature"><span id="weather-third-min-temp"></span> ~ <span id="weather-third-max-temp"></span>&deg;C</div>
-					<div class="weather-rainfall"><img src="" alt=""> 50%</div>
-				</div>
-			</div>
-			<div id="chart" class="chart weather-card"><canvas id="weatherChart"></canvas></div>
-		</div>
+    <div id="main-container">
+      <!-- 天氣資訊區塊 (縣市、今明兩天天氣、每小時天氣圖表) -->
+      <div id="weather-container" class="weather-container">
+        <div id="city" class="city weather-card">
+          <div>
+            <div class="city-title" id="city-name"></div>
+            <div class="city-date" id="city-date"></div>
+            <div class="city-subtitle">六都天氣預報</div>
+            <div class="city-btn" id="dc-btn">DC傳送！</div>
+          </div>
+          <div class="city-card-item">
+            <div class="weather-time">
+              <span id="weather-first-min-time"></span> ~
+              <span id="weather-first-max-time"></span>
+            </div>
+            <div class="city-state-icon">
+              <img
+                src="static/img/cloudy.png"
+                alt="cloudy"
+                id="weather-first-icon"
+              />
+            </div>
+            <div class="weather-temperature">
+              <span id="weather-first-min-temp"></span> ~
+              <span id="weather-first-max-temp"></span>&deg;C
+            </div>
+            <div class="weather-rainfall"><img src="" alt="" /> 50%</div>
+          </div>
+        </div>
+        <div id="weather" class="weather weather-card">
+          <div class="weather-card-item">
+            <div class="weather-title">今晚明晨</div>
+            <div class="weather-time">
+              <span id="weather-second-min-time"></span> ~
+              <span id="weather-second-max-time"></span>
+            </div>
+            <div class="weather-state-icon">
+              <img
+                src="static/img/cloudy.png"
+                alt=""
+                id="weather-second-icon"
+              />
+            </div>
+            <div class="weather-temperature">
+              <span id="weather-second-min-temp"></span> ~
+              <span id="weather-second-max-temp"></span>&deg;C
+            </div>
+            <div class="weather-rainfall"><img src="" alt="" /> 50%</div>
+          </div>
+          <div class="weather-bar"></div>
+          <div class="weather-card-item">
+            <div class="weather-title">明日白天</div>
+            <div class="weather-time">
+              <span id="weather-third-min-time"></span> ~
+              <span id="weather-third-max-time"></span>
+            </div>
+            <div class="weather-state-icon">
+              <img src="static/img/cloudy.png" alt="" id="weather-third-icon" />
+            </div>
+            <div class="weather-temperature">
+              <span id="weather-third-min-temp"></span> ~
+              <span id="weather-third-max-temp"></span>&deg;C
+            </div>
+            <div class="weather-rainfall"><img src="" alt="" /> 50%</div>
+          </div>
+        </div>
+        <div id="chart" class="chart weather-card">
+          <canvas id="weatherChart"></canvas>
+        </div>
+      </div>
 
-		<!-- 台灣縣市地圖 -->
-		<div id="map"></div>
-	</div>
-	
-</body>
+      <!-- 台灣縣市地圖 -->
+      <div id="map"></div>
+    </div>
+  </body>
 </html>

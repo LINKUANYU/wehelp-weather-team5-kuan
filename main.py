@@ -7,10 +7,10 @@ load_dotenv()
 
 app=FastAPI()
 
-app.mount("/static", StaticFiles(dictionary="static"))
+app.mount("/static", StaticFiles(directory="static"))
 
 app.include_router(get_weather.router)
 
 @app.get("/", include_in_schema=False)
 async def index(request: Request):
-    return FileResponse("/static/index.html", media_type="text/html")
+    return FileResponse("static/index.html", media_type="text/html")

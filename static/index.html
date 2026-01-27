@@ -11,6 +11,9 @@
 	<link rel="stylesheet" type="text/css" href="css/nav.css" />
 	<link rel="stylesheet" type="text/css" href="css/weather.css" />
 	<link rel="stylesheet" type="text/css" href="css/map.css" />
+
+	<!-- 第三方套件 -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 	<!-- 導覽列 -->
@@ -18,14 +21,119 @@
 
 	<div id="main-container">
 		<!-- 天氣資訊區塊 (縣市、今明兩天天氣、每小時天氣圖表) -->
-		<div id="weather-container">
-			<div id="city"></div>
-			<div id="weather"></div>
-			<div id="chart"></div>
+		<div id="weather-container" class="weather-container">
+			<div id="city" class="city">
+				<div>
+					<div class="city-title">台中市</div>
+					<div class="city-date">1/26</div>
+					<div class="city-town">鄉鎮預報</div>
+					<select id="city-town-selector" name="city-towns">
+						<option value="中區">中區</option>
+						<option value="東區">東區</option>
+						<option value="南區">南區</option>
+						<option value="西區">西區</option>
+					</select>
+				</div>
+				<div>
+					<div class="city-state-icon"><img src="" alt=""></div>
+					<div class="city-temperature">12 ~ 15&deg;C</div>
+					<div class="city-rainfall"><img src="" alt=""> 50%</div>
+				</div>
+			</div>
+			<div id="weather" class="weather">
+				<div>
+					<div class="weather-title">今晚明晨</div>
+					<div class="city-state-icon"><img src="" alt=""></div>
+					<div class="weather-tempreture">17 ~ 20&deg;C</div>
+					<div class="weather-rainfall"><img src="" alt=""> 50%</div>
+				</div>
+				<div>
+					<div class="weather-title">明日白天</div>
+					<div class="city-state-icon"><img src="" alt=""></div>
+					<div class="weather-tempreture">17 ~ 20&deg;C</div>
+					<div class="weather-rainfall"><img src="" alt=""> 50%</div>
+				</div>
+			</div>
+			<div id="chart"><canvas id="weatherChart"></canvas></div>
 		</div>
 
 		<!-- 台灣縣市地圖 -->
 		<div id="map"></div>
+		<script>
+			const ctx = document.getElementById('weatherChart').getContext('2d');
+
+			// 1. 建立漸層背景 (關鍵步驟)
+			// createLinearGradient(x0, y0, x1, y1) 從上到下
+			const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+			gradient.addColorStop(0, 'rgba(126, 211, 134, 0.8)'); // 頂部顏色 (淺綠，不透明度高)
+			gradient.addColorStop(0.5, 'rgba(126, 211, 134, 0.2)'); // 中間過渡
+			gradient.addColorStop(1, 'rgba(126, 211, 134, 0)');   // 底部顏色 (完全透明)
+
+			const data = {
+				// 對應 X 軸時間點
+				labels: ['12:00', '立即', '16:00', '18:00', '20:00', '22:00', '00:00', '02:00'],
+				datasets: [{
+					label: '溫度',
+					data: [19, 17, 16, 16, 15, 15, 15, 14], // 模擬數據
+					borderColor: '#8edba3', // 線條顏色 (亮綠色)
+					backgroundColor: gradient, // 使用上面建立的漸層
+					borderWidth: 2,
+					tension: 0.4, // 0.4 讓線條變圓滑 (Spline 效果)
+					pointRadius: 0, // 隱藏數據點 (滑鼠移上去才會顯示)
+					pointHoverRadius: 6,
+					fill: true // 啟用填充
+				}]
+			};
+
+			const config = {
+				type: 'line',
+				data: data,
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: { display: false }, // 隱藏圖例
+						tooltip: {
+							mode: 'index',
+							intersect: false,
+						}
+					},
+					scales: {
+						x: {
+							grid: {
+								color: 'rgba(255, 255, 255, 0.1)', // 垂直網格線顏色 (淡白)
+								borderDash: [5, 5], // 虛線效果
+								drawBorder: false,
+							},
+							ticks: {
+								display: false // 隱藏 X 軸文字 (因為我們用 HTML 在上方自己排版了)
+							}
+						},
+						y: {
+							min: 0, // 設定 Y 軸最小值 (參考原圖)
+							max: 40, // 設定 Y 軸最大值
+							grid: {
+								color: 'rgba(255, 255, 255, 0.1)', // 水平網格線顏色
+								borderDash: [5, 5], // 虛線效果
+								drawBorder: false,
+							},
+							ticks: {
+								color: '#9ca3af', // Y 軸文字顏色
+								stepSize: 10 // 間隔
+							},
+							position: 'left' // Y 軸位置
+						}
+					},
+					interaction: {
+						mode: 'nearest',
+						axis: 'x',
+						intersect: false
+					}
+				}
+			};
+
+			new Chart(ctx, config);
+		</script>
 	</div>
 	
 </body>

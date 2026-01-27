@@ -1,0 +1,23 @@
+.weather-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 1200px;
+}
+
+/* 縣市今日天氣 */
+.city {
+    grid-column: span 1;
+}
+
+
+/* 明天天氣區塊 */
+.weather {
+    grid-column: span 1;
+}
+
+
+/* 圖表區塊 */
+.chart {
+    grid-column: span 2;
+}

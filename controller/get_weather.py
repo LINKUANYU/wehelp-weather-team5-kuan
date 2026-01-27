@@ -1,8 +1,14 @@
 from fastapi import *
-from models import weather_api
+from models.temp_api import *
+from models.weather_api import *
 router = APIRouter()
 
 @router.get("/api/weather")
-async def get_weather():
-    res = await weather_api()
+def weather():
+    return get_weather()
+
+@router.get("/api/temp")
+def tmep():
+    return get_tmep()
+
     

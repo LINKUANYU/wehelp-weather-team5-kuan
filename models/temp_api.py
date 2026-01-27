@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-import xmltodict
+
 load_dotenv()
 
 def get_tmep():
@@ -16,15 +16,12 @@ def get_tmep():
     parmas = {
         'Authorization': CWB_API_KEY,
         'ElementName': '溫度'
-
     }
-
     res = requests.get(url, params=parmas)    
     row_data = res.json()
     data = prase_data(row_data)
 
     return {"ok": True, "description": '全縣市每小時溫度預報', 'data': data}
-
 
 def prase_data(row_data):
     locations = row_data['records']['Locations'][0]['Location']
@@ -47,6 +44,3 @@ def prase_data(row_data):
 
     return data
     
-
-
-print(get_tmep())

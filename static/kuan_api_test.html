@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>可愛狗狗 | 天氣預報</title>
+	<!-- 建立整體樣式指導：基礎字型、字體、基底色、標題、段落樣式等等 -->
+	<link rel="stylesheet" type="text/css" href="static/css/common.css" />
+	<!-- 區域樣式 -->
+	<link rel="stylesheet" type="text/css" href="static/css/nav.css" />
+	<link rel="stylesheet" type="text/css" href="static/css/weather.css" />
+	<link rel="stylesheet" type="text/css" href="static/css/map.css" />
+</head>
+<body>
+	<!-- 導覽列 -->
+	<div id="nav"></div>
+
+	<div id="main-container">
+		<!-- 天氣資訊區塊 (縣市、今明兩天天氣、每小時天氣圖表) -->
+		<div id="weather-container">
+			<div id="city"></div>
+			<div id="weather"></div>
+			<div id="chart"></div>
+			<img id="test">
+		</div>
+
+		<!-- 台灣縣市地圖 -->
+		<div id="map"></div>
+	</div>
+	<script type="module" defer>
+		async function test_fetch_temp(){
+			try{
+				const res = await fetch("/api/temp")
+				if (res.ok){
+					const data = await res.json();
+					console.log(data);
+					return data
+				}
+			}catch(e){
+				console.log(e);
+			}
+		}
+
+		async function test_fetch_weather(){
+			try{
+				const res = await fetch("/api/weather")
+				if (res.ok){
+					const data = await res.json();
+					console.log(data);
+					return data
+				}
+			}catch(e){
+				console.log(e);
+			}
+		}
+
+		function test_img(data){
+			const path = data[0].forecasts[0].weather_icon_path
+			const img = document.querySelector('#test');
+			img.src = path;
+		}
+
+		
+		const data = await test_fetch_weather()
+		test_img(data);
+		test_fetch_temp();
+
+	</script>
+</body>
+</html>

@@ -10,18 +10,23 @@ export class WeatherView {
     this.firstStateIcon = document.getElementById("weather-first-icon");
     this.firstMinTemp = document.getElementById("weather-first-min-temp");
     this.firstMaxTemp = document.getElementById("weather-first-max-temp");
+    this.firstState = document.getElementById("weather-first-state");
 
     this.secondMinTime = document.getElementById("weather-second-min-time");
     this.secondMaxTime = document.getElementById("weather-second-max-time");
     this.secondStateIcon = document.getElementById("weather-second-icon");
     this.secondMinTemp = document.getElementById("weather-second-min-temp");
     this.secondMaxTemp = document.getElementById("weather-second-max-temp");
+    this.secondTitle = document.getElementById("weather-second-title");
+    this.secondState = document.getElementById("weather-second-state");
 
     this.thirdMinTime = document.getElementById("weather-third-min-time");
     this.thirdMaxTime = document.getElementById("weather-third-max-time");
     this.thirdStateIcon = document.getElementById("weather-third-icon");
     this.thirdMinTemp = document.getElementById("weather-third-min-temp");
     this.thirdMaxTemp = document.getElementById("weather-third-max-temp");
+    this.thirdTitle = document.getElementById("weather-third-title");
+    this.thirdState = document.getElementById("weather-third-state");
 
     // chart
     this.ctx = document.getElementById("weatherChart").getContext("2d"); // canvas
@@ -44,6 +49,9 @@ export class WeatherView {
   renderWeatherBlock(data) {
     if (!data || data.length === "") return;
 
+    // 面板閃爍回饋
+    this._flashAllCards();
+
     if (data[0]) {
       // 第一區
       this.firstMinTime.textContent = data[0]["startTime"].slice(11, 16);
@@ -52,6 +60,17 @@ export class WeatherView {
       this.firstStateIcon.alt = data[0]["weather"];
       this.firstMinTemp.textContent = data[0]["minT"];
       this.firstMaxTemp.textContent = data[0]["maxT"];
+      this.firstState.textContent = data[0]["weather"];
+
+      // "預測天氣面板"標題
+      if (data[0]["endTime"].slice(11,13)=="06") {
+        this.secondTitle.textContent = "今日白天";
+        this.thirdTitle.textContent = "今日晚上";
+      }
+      else {
+        this.secondTitle.textContent = "明日白天";
+        this.thirdTitle.textContent = "明日晚上";
+      }
     }
 
     if (data[1]) {
@@ -62,6 +81,7 @@ export class WeatherView {
       this.secondStateIcon.alt = data[1]["weather"];
       this.secondMinTemp.textContent = data[1]["minT"];
       this.secondMaxTemp.textContent = data[1]["maxT"];
+      this.secondState.textContent = data[1]["weather"];
     }
 
     if (data[2]) {
@@ -72,7 +92,9 @@ export class WeatherView {
       this.thirdStateIcon.alt = data[2]["weather"];
       this.thirdMinTemp.textContent = data[2]["minT"];
       this.thirdMaxTemp.textContent = data[2]["maxT"];
+      this.thirdState.textContent = data[2]["weather"];
     }
+
   }
 
   createWeatherChart(xLabels, yValues) {
@@ -213,5 +235,23 @@ export class WeatherView {
     } else {
       console.error("圖表尚未初始化，請先呼叫 initWeatherChart");
     }
+  }
+
+  // 資料畫面閃爍
+  _flashAllCards() {
+      const cards = document.querySelectorAll('.weather-card');
+
+      if (!cards) return;
+
+      cards.forEach(card => {
+          card.classList.add('weather-flash-active');
+      });
+
+      // 0.3 秒後統一移除
+      setTimeout(() => {
+          cards.forEach(card => {
+              card.classList.remove('weather-flash-active');
+          });
+      }, 200);
   }
 }

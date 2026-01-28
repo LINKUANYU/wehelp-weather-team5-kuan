@@ -121,3 +121,19 @@
   font-weight: 700;
   margin-bottom: 4px;
 }
+
+@media (max-width: 1200px) {
+  #map {
+    grid-column: span 6;
+    grid-column-start: 7;
+    grid-column-end: 13;
+    grid-row-start: 1;
+    grid-row-end: 3;
+  }
+}
+
+@media (max-width: 800px) {
+  #map {
+    display: none;
+  }
+}

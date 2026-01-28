@@ -1,7 +1,9 @@
-* {
-  border: 0;
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap");
+
+*, *::before, *::after {
   margin: 0;
   padding: 0;
+  border: 0;
   box-sizing: border-box;
 }
 
@@ -13,17 +15,8 @@
   --color-text-light: #8e8e8e;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap");
-
 html {
-  box-sizing: border-box;
   background-color: var(--color-yellow);
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
 }
 
 body {
@@ -36,6 +29,7 @@ body {
 #main-container {
   display: flex;
   justify-content: center;
+  padding-bottom: 30px;
 }
 
 a {

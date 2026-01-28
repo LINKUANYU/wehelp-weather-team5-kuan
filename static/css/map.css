@@ -1,0 +1,125 @@
+#map {
+  position: absolute;
+  top: 120px;
+  left: 800px;
+  width: 500px;
+  height: 637.2px;
+
+  /* grid-column-start: 3;
+  grid-column-end: 5;
+  grid-row-start: 1;
+  grid-row-end: 3; */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-left: 20px;
+  overflow: hidden;
+  border-radius: 30px;
+  background-color: var(--color-darkblue);
+}
+.map-svg {
+  fill: white;
+}
+.path {
+  stroke: var(--color-darkblue);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
+}
+.path:hover,
+.path.is-active {
+  fill: var(--color-lightblue);
+  transform: translate(0px, -1px);
+  transition: all 500ms ease-out;
+}
+
+.island {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.map-lienchiang-county {
+  transform: translate(-10px, 80px) scale(8);
+}
+.map-kinmen-county {
+  transform: translate(100px, -20px) scale(1.5);
+}
+.map-penghu-county {
+  transform: translate(-10px, -40px) scale(2);
+}
+
+/* 讓 overlay 能定位在 svg 上方 */
+.map {
+  position: relative;
+}
+
+/* overlay 容器：蓋在 svg 上 */
+.weather_data {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* 不擋 svg 點擊 */
+}
+
+/* icon 點 */
+.weather_data .icon_zone {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto; /* 自己可點 */
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 2;
+
+  background-color: var(--color-lightblue);
+  border: 6px solid var(--color-lightblue);
+  border-radius: 50%;
+}
+
+/* 預設：圓圈 icon，文字不顯示 */
+.weather_data .icon_zone img {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  display: block;
+  border: none;
+}
+
+.weather_data .icon_zone .city,
+.weather_data .icon_zone .desc {
+  display: none;
+}
+
+/* 點擊後：方框 */
+.weather_data .icon_zone.is-active {
+  background: #fff;
+  z-index: 5;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 3px solid var(--color-lightblue);
+  min-width: 120px;
+  text-align: center;
+}
+
+/* 點擊後：隱藏 icon */
+.weather_data .icon_zone.is-active img {
+  display: none;
+  box-shadow: 3px 3px 10px transparent;
+  background-color: transparent;
+  transition: all 700ms ease-out;
+}
+
+/* 點擊後：顯示文字 */
+.weather_data .icon_zone.is-active .city,
+.weather_data .icon_zone.is-active .desc {
+  display: block;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-darkblue);
+}
+.weather_data .icon_zone.is-active .desc {
+  color: var(--color-text-light);
+}
+
+.weather_data .icon_zone.is-active .city {
+  font-weight: 700;
+  margin-bottom: 4px;
+}

@@ -1,32 +1,618 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>可愛狗狗 | 天氣預報</title>
-	<!-- 建立整體樣式指導：基礎字型、字體、基底色、標題、段落樣式等等 -->
-	<link rel="stylesheet" type="text/css" href="css/common.css" />
-	<!-- 區域樣式 -->
-	<link rel="stylesheet" type="text/css" href="css/nav.css" />
-	<link rel="stylesheet" type="text/css" href="css/weather.css" />
-	<link rel="stylesheet" type="text/css" href="css/map.css" />
-</head>
-<body>
-	<!-- 導覽列 -->
-	<div id="nav"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>可愛狗狗 | 天氣預報</title>
+    <!-- 建立整體樣式指導：基礎字型、字體、基底色、標題、段落樣式等等 -->
+    <link rel="stylesheet" type="text/css" href="static/css/common.css" />
+    <!-- 區域樣式 -->
+    <link rel="stylesheet" type="text/css" href="static/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/weather.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/map.css" />
 
-	<div id="main-container">
-		<!-- 天氣資訊區塊 (縣市、今明兩天天氣、每小時天氣圖表) -->
-		<div id="weather-container">
-			<div id="city"></div>
-			<div id="weather"></div>
-			<div id="chart"></div>
-		</div>
+    <script type="module" src="/static/js/index.js"></script>
+    <script type="module" src="/static/js/nav.js"></script>
+    <script type="module" src="/static/js/map.js"></script>
 
-		<!-- 台灣縣市地圖 -->
-		<div id="map"></div>
-	</div>
-	
-</body>
+    <!-- 第三方套件 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <!-- 導覽列 -->
+    <div id="nav">
+      <div class="nav-container">
+        <ul class="nav-container-input">
+          <li>點選小圖示或地圖以切換地點</li>
+        </ul>
+        <ul class="nav-container-ul">
+          <li class="nav-ul-li"><a class="nav-li-a" href="#">地點一</a></li>
+          <li class="nav-ul-li"><a class="nav-li-a" href="#">地點二</a></li>
+          <li class="nav-ul-li"><a class="nav-li-a" href="#">地點三</a></li>
+          <li class="nav-ul-li"><a class="nav-li-a" href="#">地點四</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="main-container">
+      <!-- 天氣資訊區塊 (縣市、今明兩天天氣、每小時天氣圖表) -->
+      <div id="weather-container" class="weather-container">
+        <div id="city" class="city weather-card">
+          <div>
+            <div class="city-title" id="city-name"></div>
+            <div class="city-date" id="city-date"></div>
+            <div class="city-subtitle">六都天氣預報</div>
+            <div class="city-btn" id="dc-btn">DC傳送！</div>
+          </div>
+          <div class="city-card-item">
+            <div class="weather-time">
+              <span id="weather-first-min-time"></span> ~
+              <span id="weather-first-max-time"></span>
+            </div>
+            <div class="city-state-icon">
+              <img
+                src="static/img/cloudy.png"
+                alt="cloudy"
+                id="weather-first-icon"
+              />
+            </div>
+            <div class="weather-temperature">
+              <span id="weather-first-min-temp"></span> ~
+              <span id="weather-first-max-temp"></span>&deg;C
+            </div>
+            <div class="weather-rainfall"><img src="" alt="" /> 50%</div>
+          </div>
+        </div>
+        <div id="weather" class="weather weather-card">
+          <div class="weather-card-item">
+            <div class="weather-title">今晚明晨</div>
+            <div class="weather-time">
+              <span id="weather-second-min-time"></span> ~
+              <span id="weather-second-max-time"></span>
+            </div>
+            <div class="weather-state-icon">
+              <img
+                src="static/img/cloudy.png"
+                alt=""
+                id="weather-second-icon"
+              />
+            </div>
+            <div class="weather-temperature">
+              <span id="weather-second-min-temp"></span> ~
+              <span id="weather-second-max-temp"></span>&deg;C
+            </div>
+            <div class="weather-rainfall"><img src="" alt="" /> 50%</div>
+          </div>
+          <div class="weather-bar"></div>
+          <div class="weather-card-item">
+            <div class="weather-title">明日白天</div>
+            <div class="weather-time">
+              <span id="weather-third-min-time"></span> ~
+              <span id="weather-third-max-time"></span>
+            </div>
+            <div class="weather-state-icon">
+              <img src="static/img/cloudy.png" alt="" id="weather-third-icon" />
+            </div>
+            <div class="weather-temperature">
+              <span id="weather-third-min-temp"></span> ~
+              <span id="weather-third-max-temp"></span>&deg;C
+            </div>
+            <div class="weather-rainfall"><img src="" alt="" /> 50%</div>
+          </div>
+        </div>
+        <div id="chart" class="chart weather-card">
+          <canvas id="weatherChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 台灣縣市地圖 -->
+      <div id="map">
+        <div class="map map-wrap">
+          <?xml version="1.0"?>
+          <svg
+            class="map-svg"
+            xmlns="http://www.w3.org/2000/svg"
+            version="1.2"
+            baseProfile="tiny"
+            width="400"
+            height="600"
+            viewBox="422 49 150 310"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <!-- 本島 -->
+            <!-- 基隆市 -->
+            <g id="keelung_city" class="map-keelung-city">
+              <path
+                class="path"
+                d="M 583.3 98.73 577.73 105.26 571.73 102.06 575.96 95.57 583.3 98.73 Z"
+              />
+            </g>
+
+            <!-- 新北市 -->
+            <g class="map-new-taipei-city">
+              <path
+                class="path"
+                d="M 575.96 95.57 571.73 102.06 577.73 105.26 583.3 98.73 592.05 103.28 596.02 110.71 586.72 112.49 579.97 120.6 566.75 126.01 557.99 134.91 545.28 115.93 550.64 104.44 542.6 100.17 550.93 97.82 555.85 89.6 565.63 86 575.96 95.57 Z M 565.11 93.96 556.86 99.09 564.34 112.15 569.62 102.62 565.11 93.96 Z"
+                fill-rule="evenodd"
+              />
+            </g>
+
+            <!-- 台北市 -->
+            <g class="map-taipei-city">
+              <path
+                class="path"
+                d="M 565.11 93.96 569.62 102.62 564.34 112.15 556.86 99.09 565.11 93.96 Z"
+              />
+            </g>
+
+            <!-- 桃園市 -->
+            <g class="map-taoyuan-city">
+              <path
+                class="path"
+                d="M 542.6 100.17 550.64 104.44 545.28 115.93 557.99 134.91 551.97 141.33 544.51 128.56 519.02 114.08 524.49 105.98 542.6 100.17 Z"
+              />
+            </g>
+
+            <!-- 新竹縣 -->
+            <g id="hsinchu_county" class="map-hsinchu-county">
+              <path
+                class="path"
+                d="M 551.97 141.33 545.28 153.09 540.79 154.06 537.54 148.64 526.07 148.63 526.2 139.65 515.38 131.87 514.58 120.75 519.02 114.08 544.51 128.56 551.97 141.33 Z"
+              />
+            </g>
+
+            <!-- 新竹市 -->
+            <g class="map-hsinchu-city">
+              <path
+                class="path"
+                d="M 515.38 131.87 510.61 129.86 514.58 120.75 515.38 131.87 Z"
+              />
+            </g>
+
+            <!-- 苗栗縣 -->
+            <g class="map-miaoli-county">
+              <path
+                class="path"
+                d="M 515.38 131.87 526.2 139.65 526.07 148.63 537.54 148.64 540.79 154.06 523.19 164.38 515.39 160.8 507.41 164.9 490.84 153.18 498.19 140.61 510.61 129.86 515.38 131.87 Z"
+              />
+            </g>
+
+            <!-- 台中市 -->
+            <g class="map-taichung-city">
+              <path
+                class="path"
+                d="M 555.8 159.1 547.27 170.14 540.39 168.6 520.32 177.7 508.29 177.89 502.48 186.92 495.28 186.53 477.91 171.42 490.84 153.18 507.41 164.9 515.39 160.8 523.19 164.38 540.79 154.06 545.28 153.09 555.8 159.1 Z"
+              />
+            </g>
+
+            <!-- 南投縣 -->
+            <g class="map-nantou-county">
+              <path
+                class="path"
+                d="M 547.27 170.14 542.44 177 541.43 196.73 536.49 205.54 537.1 218.92 525.79 225.31 521.62 231.81 517.1 229.14 507.83 229.01 506.63 219.93 499.37 218.08 493.92 218.11 492.29 204.37 495.28 186.53 502.48 186.92 508.29 177.89 520.32 177.7 540.39 168.6 547.27 170.14 Z"
+              />
+            </g>
+
+            <!-- 彰化縣 -->
+            <g class="map-changhua-county">
+              <path
+                class="path"
+                d="M 477.91 171.42 495.28 186.53 492.29 204.37 459.43 198.1 477.91 171.42 Z"
+              />
+            </g>
+
+            <!-- 雲林縣 -->
+            <g class="map-yunlin-county">
+              <path
+                class="path"
+                d="M 492.29 204.37 493.92 218.11 499.37 218.08 484.2 219.34 473.69 216.82 459.64 226.42 453.59 225.13 451.88 215.55 459.43 198.1 492.29 204.37 Z"
+              />
+            </g>
+
+            <!-- 嘉義縣 -->
+            <g class="map-chiayi-county">
+              <path
+                class="path"
+                d="M 499.37 218.08 506.63 219.93 507.83 229.01 517.1 229.14 496.45 243.61 493.31 248.31 485.6 248.85 484.44 240.22 476.48 233.53 465.11 236.51 459.47 242.72 451.42 239.26 453.59 225.13 459.64 226.42 473.69 216.82 484.2 219.34 499.37 218.08 Z M 477.2 225.33 472.97 228.13 476.58 231.48 482.03 228.72 477.2 225.33 Z"
+                fill-rule="evenodd"
+              />
+            </g>
+
+            <!-- 嘉義市 -->
+            <g class="map-chiayi-city">
+              <path
+                class="path"
+                d="M 477.2 225.33 482.03 228.72 476.58 231.48 472.97 228.13 477.2 225.33 Z"
+              />
+            </g>
+
+            <!-- 台南市 -->
+            <g class="map-tainan-city">
+              <path
+                class="path"
+                d="M 493.31 248.31 485.57 260.49 469.86 274.29 455.86 272.79 444.37 260 451.42 239.26 459.47 242.72 465.11 236.51 476.48 233.53 484.44 240.22 485.6 248.85 493.31 248.31 Z"
+              />
+            </g>
+
+            <!-- 高雄市 -->
+            <g class="map-kaohsiung-city">
+              <path
+                class="path"
+                d="M 521.62 231.81 522.65 242.63 513.81 247.29 509.53 265.25 509.83 278.16 492.65 274.86 478.86 279.13 475.39 307.45 462.82 297.03 462.23 288 455.86 272.79 469.86 274.29 485.57 260.49 493.31 248.31 496.45 243.61 517.1 229.14 521.62 231.81 Z"
+              />
+            </g>
+
+            <!-- 屏東縣 -->
+            <g class="map-pingtung-county">
+              <path
+                class="path"
+                d="M 509.83 278.16 511.31 288.02 504.6 290.2 500.04 300.97 504.64 322.49 512.31 324.84 512.7 341.43 506.52 349.26 495.8 342.25 498.27 336.83 491.96 319.65 475.39 307.45 478.86 279.13 492.65 274.86 509.83 278.16 Z"
+              />
+            </g>
+
+            <!-- 台東縣 -->
+            <g class="map-taitung-county">
+              <path
+                class="path"
+                d="M 559.25 231.85 551.58 249.6 552.6 256.18 536.16 281.84 522.17 293.32 512.21 317.94 512.31 324.84 504.64 322.49 500.04 300.97 504.6 290.2 511.31 288.02 509.83 278.16 509.53 265.25 513.81 247.29 522.65 242.63 545.15 257.23 551.73 235.74 559.25 231.85 Z"
+              />
+            </g>
+
+            <!-- 花蓮縣 -->
+            <g class="map-hualien-county">
+              <path
+                class="path"
+                d="M 581 162.96 568.87 180.62 568.31 192.85 559.25 231.85 551.73 235.74 545.15 257.23 522.65 242.63 521.62 231.81 525.79 225.31 537.1 218.92 536.49 205.54 541.43 196.73 542.44 177 547.27 170.14 555.8 159.1 564.25 162.39 581 162.96 Z"
+              />
+            </g>
+
+            <!-- 宜蘭縣 -->
+            <g class="map-yilan-county">
+              <path
+                class="path"
+                d="M 596.02 110.71 584.57 124.78 589.68 140.71 581 162.96 564.25 162.39 555.8 159.1 545.28 153.09 551.97 141.33 557.99 134.91 566.75 126.01 579.97 120.6 586.72 112.49 596.02 110.71 Z"
+              />
+            </g>
+
+            <!-- 離島 -->
+            <!-- 連江縣 -->
+            <g class="island map-lienchiang-county">
+              <path
+                class="path"
+                d="M 441.9 12.51 442.7 13.42 441.9 14.09 440.87 13.53 441.9 12.51 Z"
+              />
+            </g>
+
+            <!-- 金門縣 -->
+            <g class="island map-kinmen-county">
+              <path
+                class="path"
+                d="M 317.87 145.99 322.95 152.16 308.94 156.68 317.87 145.99 Z"
+              />
+            </g>
+
+            <!-- 澎湖縣 -->
+            <g class="island map-penghu-county">
+              <path
+                class="path"
+                d="M 409.66 212.94 411.92 218.77 417.19 220.08 411.9 223.86 409.66 212.94 Z"
+              />
+            </g>
+          </svg>
+          <!-- 天氣 icon -->
+          <div class="weather_data" id="map-weather-overlay">
+            <!-- 基隆市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="基隆市"
+              data-target=".map-keelung-city"
+              style="left: 100%; top: 12%"
+            >
+              <span class="city">基隆市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 新北市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="新北市"
+              data-target=".map-new-taipei-city"
+              style="left: 74%; top: 6%"
+            >
+              <span class="city">新北市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 台北市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="臺北市"
+              data-target=".map-taipei-city"
+              style="left: 88%; top: 5%"
+            >
+              <span class="city">台北市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 桃園市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="桃園市"
+              data-target=".map-taoyuan-city"
+              style="left: 61%; top: 12%"
+            >
+              <span class="city">桃園市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 新竹縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="新竹縣"
+              data-target=".map-hsinchu-county"
+              style="left: 50%; top: 18%"
+            >
+              <span class="city">新竹縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 新竹市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="新竹市"
+              data-target=".map-hsinchu-city"
+              style="left: 37%; top: 18%"
+            >
+              <span class="city">新竹市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 苗栗縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="苗栗縣"
+              data-target=".map-miaoli-county"
+              style="left: 40%; top: 27%"
+            >
+              <span class="city">苗栗縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 台中市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="臺中市"
+              data-target=".map-taichung-city"
+              style="left: 32%; top: 35%"
+            >
+              <span class="city">台中市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 南投縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="南投縣"
+              data-target=".map-nantou-county"
+              style="left: 62%; top: 47%"
+            >
+              <span class="city">南投縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 彰化縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="彰化縣"
+              data-target=".map-changhua-county"
+              style="left: 23%; top: 43%"
+            >
+              <span class="city">彰化縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 雲林縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="雲林縣"
+              data-target=".map-yunlin-county"
+              style="left: 18%; top: 51.5%"
+            >
+              <span class="city">雲林縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 嘉義縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="嘉義縣"
+              data-target=".map-chiayi-county"
+              style="left: 17%; top: 61%"
+            >
+              <span class="city">嘉義縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 嘉義市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="嘉義市"
+              data-target=".map-chiayi-city"
+              style="left: 4%; top: 61%"
+            >
+              <span class="city">嘉義市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 台南市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="臺南市"
+              data-target=".map-tainan-city"
+              style="left: 18%; top: 71%"
+            >
+              <span class="city">台南市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 高雄市 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="高雄市"
+              data-target=".map-kaohsiung-city"
+              style="left: 25%; top: 80%"
+            >
+              <span class="city">高雄市</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 屏東縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="屏東縣"
+              data-target=".map-pingtung-county"
+              style="left: 39%; top: 90%"
+            >
+              <span class="city">屏東縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 台東縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="臺東縣"
+              data-target=".map-taitung-county"
+              style="left: 72%; top: 80%"
+            >
+              <span class="city">台東縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 花蓮縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="花蓮縣"
+              data-target=".map-hualien-county"
+              style="left: 92%; top: 50%"
+            >
+              <span class="city">花蓮縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 宜蘭縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="宜蘭縣"
+              data-target=".map-yilan-county"
+              style="left: 103%; top: 30%"
+            >
+              <span class="city">宜蘭縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 連江縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="連江縣"
+              data-target=".map-lienchiang-county"
+              style="left: 12%; top: 10%"
+            >
+              <span class="city">連江縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 金門縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="金門縣"
+              data-target=".map-kinmen-county"
+              style="left: 4%; top: 23%"
+            >
+              <span class="city">金門縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+
+            <!-- 澎湖縣 -->
+            <a
+              href="javascript:void(0)"
+              role="button"
+              class="icon_zone"
+              data-city="澎湖縣"
+              data-target=".map-penghu-county"
+              style="left: 2%; top: 37%"
+            >
+              <span class="city">澎湖縣</span>
+              <span class="desc"></span>
+              <img src="" alt="" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

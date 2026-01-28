@@ -1,0 +1,142 @@
+.weather-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 800px;
+    color: #fff;
+}
+
+.weather-card {
+    background-color: var(--color-darkblue);
+    padding: 30px;
+    border-radius: 30px;
+}
+
+
+/* 縣市今日天氣 */
+.city {
+    grid-column: span 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.city-title {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 3rem;
+    padding-bottom: 5px;
+}
+
+.city-date {
+    font-size: 2rem;
+}
+
+.city-subtitle {
+    font-size: 1.25rem;
+    margin-top: 50px;
+    margin-bottom: 10px;
+}
+
+.city-btn {
+    width: 106px;
+    padding: 15px 8px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1.25rem;
+    background-color: var(--color-yellow);
+    color: var(--color-text);
+    border-radius: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.city-btn:hover {
+    background-color: #AED6CF;
+    color: #fff;
+    scale: calc(1.02);
+}
+
+.city-btn:active {
+    background-color: #91ADC8;
+}
+
+.city-card-item {
+    text-align: center;
+    padding: 0 20px;
+}
+
+.city-state-icon {
+    width: 128px;
+    height: 128px;
+    overflow: hidden;
+}
+
+.city-state-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 天氣區塊 */
+.weather {
+    grid-column: span 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.weather-card-item {
+    text-align: center;
+}
+
+.weather-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    padding-bottom: 10px;
+}
+
+.weather-time {
+    font-size: 1rem;
+    padding-bottom: 20px;
+
+}
+
+.weather-state-icon {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.weather-state-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.weather-temperature {
+    padding-top: 30px;
+    padding-bottom: 10px;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.weather-rainfall {
+    font-size: 1rem;
+    display: none;
+}
+
+.weather-bar {
+    width: 3px;
+    height: 100%;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+
+/* 圖表區塊 */
+.chart {
+    grid-column: span 2;
+    height: 300px;
+}

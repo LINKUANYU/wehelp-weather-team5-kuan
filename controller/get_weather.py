@@ -19,8 +19,8 @@ def weather(cur = Depends(get_cur)):
     return {"ok":True, "description": "全縣市36小時天氣預報", "data": data}
 
 @router.get("/api/temp")
-def tmep():
-    return request_temp.get_tmep()
+def temp():
+    return request_temp.get_temp()
 
 
 # 推送天氣到Discord

@@ -23,16 +23,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_weather():
-    CWB_API_KEY = os.getenv('CWB_API_KEY')
+    CWA_API_KEY = os.getenv('CWA_API_KEY')
 
-    if not CWB_API_KEY:
+    if not CWA_API_KEY:
         print("API_KEY not found")
         return
     
     url = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001"
 
     parmas = {
-        'Authorization': CWB_API_KEY,
+        'Authorization': CWA_API_KEY,
     }
 
     res = requests.get(url, params=parmas)

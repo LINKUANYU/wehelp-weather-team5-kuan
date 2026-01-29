@@ -4,12 +4,13 @@
     'data': [
         {
             'city': '嘉義縣', 
-            'forcasts': [
+            'forecasts': [
                 {
                     'startTime': '2026-01-27 12:00:00', 
                     'endTime': '2026-01-27 18:00:00', 
                     'weather': '晴時多雲', 
                     'weather_code': '2', 
+                    'weather_icon_path': 'static/icon/02.svg',
                     'rain_pro': '20', 
                     'minT': '20', 
                     'maxT': '23', 
@@ -20,6 +21,7 @@
                     'endTime': '2026-01-28 06:00:00', 
                     'weather': '多雲', 
                     'weather_code': '4', 
+                    'weather_icon_path': 'static/icon/04.svg',
                     'rain_pro': '20', 
                     'minT': '16', 
                     'maxT': '20', 
@@ -30,6 +32,7 @@
                     'endTime': '2026-01-28 18:00:00', 
                     'weather': '晴時多雲', 
                     'weather_code': '2', 
+                    'weather_icon_path': 'static/icon/02.svg',
                     'rain_pro': '20', 
                     'minT': '16', 
                     'maxT': '22', 
@@ -39,7 +42,7 @@
         }, 
         {
             'city': '新北市', 
-            'forcasts': [
+            'forecasts': [
                 {
                     '依此類推':'依此類推'
                 }

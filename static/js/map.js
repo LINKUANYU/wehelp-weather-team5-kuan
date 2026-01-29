@@ -27,7 +27,7 @@ async function syncRightPanel(cityKey) {
 }
 
 function pickCurrentForecast(cityObj) {
-  return cityObj?.forcasts?.[0] ?? null;
+  return cityObj?.forecasts?.[0] ?? null;
 }
 
 function getIconSrc(code) {

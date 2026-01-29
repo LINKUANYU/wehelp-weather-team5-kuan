@@ -1,5 +1,5 @@
 import { WeatherView } from "./WeatherView.js";
-import { getWeather, getTempPerHour } from "./weatherModel.js";
+import { getWeather, getTempPerHour, sentTempToDC } from "./weatherModel.js";
 
 export class WeatherController {
     constructor () {
@@ -18,8 +18,8 @@ export class WeatherController {
         this.AllTempData = await getTempPerHour();
         this.initChart("臺中市");
 
-        const btn = document.getElementById("dc-btn");
-        btn.addEventListener("click", () => this.updateChart("新北市"));
+        // discord 按鈕
+        this.setDiscordBtn();
     }
 
     // 依照傳入縣市設置天氣面板
@@ -27,13 +27,13 @@ export class WeatherController {
         this.view.renderCityBlock(city);
 
         const targetCity = this.AllWeatherData.find(item => item.city === city);
-        const CityWeather = targetCity?.forcasts;
+        const CityWeather = targetCity?.forecasts;
         this.view.renderWeatherBlock(CityWeather);
     }
 
     initChart(city) {
         const targetCity = this.AllTempData.find(item => item.city === city);
-        const CityTempPerHour = targetCity?.forcasts;
+        const CityTempPerHour = targetCity?.forecasts;
         const data = this._processForecastData(CityTempPerHour);
         if (data?.x?.length > 0 && data?.y?.length > 0) {
             this.view.createWeatherChart(data.x, data.y);
@@ -42,11 +42,18 @@ export class WeatherController {
 
     updateChart(city) {
         const targetCity = this.AllTempData.find(item => item.city === city);
-        const CityTempPerHour = targetCity?.forcasts;
+        const CityTempPerHour = targetCity?.forecasts;
         const data = this._processForecastData(CityTempPerHour);
         if (data?.x?.length > 0 && data?.y?.length > 0) {
             this.view.updateWeatherChart(data.x, data.y);
         }
+    }
+
+    setDiscordBtn() {
+        const btn = document.getElementById("dc-btn");
+        btn.addEventListener("click", async () => {
+           const data = await sentTempToDC();
+        });
     }
 
     _processForecastData(data) {

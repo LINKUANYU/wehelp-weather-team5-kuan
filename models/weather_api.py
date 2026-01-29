@@ -1,61 +1,81 @@
-import requests
-import os
-from dotenv import load_dotenv
+from fastapi import *
 
-load_dotenv()
 
-def get_weather():
-    CWB_API_KEY = os.getenv('CWB_API_KEY')
+class WeatherModel:
+    @staticmethod
+    def get_weather(cur):
+        try:
+            # 使用 Window Function (ROW_NUMBER) 確保每個城市只取最新的 3 筆
+            sql = """
+                WITH latest AS (
+                    SELECT 
+                        l.city_name, f.start_time, f.end_time, f.weather, f.weather_code, 
+                        ti.icon_path, f.rain_pro, f.min_temp, f.max_temp, f.comfort, 
+                        l.id AS city_id,
+                        ROW_NUMBER() OVER(
+                            PARTITION BY f.location_id, f.end_time 
+                            ORDER BY f.created_at DESC
+                        ) AS last_rank 
+                    FROM weather_forecasts f
+                    JOIN locations l ON l.id = f.location_id
+                    JOIN weather_types ti ON f.weather_code = ti.weather_code
+                    WHERE f.end_time > NOW() -- 只選擇還沒有過期的資料
+                ), 
+                middle AS (
+                    SELECT * FROM latest WHERE last_rank = 1  -- 這裡不可有分號
+                ), 
+                top3 AS (
+                    SELECT *, 
+                        ROW_NUMBER() OVER(
+                            PARTITION BY city_id 
+                            ORDER BY start_time ASC -- 這裡改成時間排序，拿最近的三場預報
+                        ) AS row_num 
+                    FROM middle
+                )
+                SELECT * FROM top3 
+                WHERE row_num <= 3 
+                ORDER BY city_id ASC, start_time ASC;
+            """
+            cur.execute(sql)
+            rows = cur.fetchall()
 
-    if not CWB_API_KEY:
-        print("API_KEY not found")
-        return
+            if not rows:
+                print("Warning: No weather data found. Check if sync is running.")
+
+            return WeatherModel.format_forecast_data(rows)
+        except Exception as e:
+            print(f"DB Error: {e}")
+            raise HTTPException(status_code=500, detail={"error": True, "message": "can't get data from DB"})
     
-    url = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001"
-
-    parmas = {
-        'Authorization': CWB_API_KEY,
-    }
-
-    res = requests.get(url, params=parmas)
-    row_data = res.json()
-    data = prase_data(row_data)
-    
-    return {'ok': True, 'description': '全縣市36小時天氣預報', 'data': data}
-
-def prase_data(row_data):
-    locations = row_data['records']['location']
-    data = []
-    for location in locations:
-        city_name = location['locationName']
         
-        weather_map = {}
+    
+    @staticmethod
+    def format_forecast_data(rows):
+        """將扁平的 DB 資料轉換為前端所需的巢狀結構"""
+        # 用來存放最終結果的字典，key 為城市名
+        city_groups = {}
 
-        for item in location['weatherElement']:
-            key = item['elementName']
-            value = item['time'] # 如Wx, PoP, Ci
-            weather_map[key] = value # [...] 整串資料
+        for row in rows:
+            city = row["city_name"]
 
-        forcasts = []
+            if city not in city_groups:
+                city_groups[city] = {
+                    'city': city,
+                    'forecasts': []
+                }
 
-        for i in range(3):
-            slot = {
-                'startTime': weather_map['Wx'][i]['startTime'],
-                'endTime': weather_map['Wx'][i]['endTime'],
-                'weather': weather_map['Wx'][i]['parameter']['parameterName'],
-                'weather_code': weather_map['Wx'][i]['parameter']['parameterValue'],
-
-                'rain_pro': weather_map['PoP'][i]['parameter']['parameterName'],
-
-                'minT': weather_map['MinT'][i]['parameter']['parameterName'],
-                'maxT': weather_map['MaxT'][i]['parameter']['parameterName'],
-
-                'comfort': weather_map['CI'][i]['parameter']['parameterName'],
+            forecast_item = {
+                'startTime': row['start_time'].strftime('%Y-%m-%d %H:%M:%S'),
+                'endTime': row['end_time'].strftime('%Y-%m-%d %H:%M:%S'),
+                'weather': row['weather'],
+                'weather_code': row['weather_code'],
+                'weather_icon_path': f"static/{row['icon_path']}",
+                'rain_pro': str(row['rain_pro']),
+                'minT': str(row['min_temp']),
+                'maxT': str(row['max_temp']),
+                'comfort': row['comfort']
             }
-            forcasts.append(slot)
-        
-        city_map = {'city': city_name, 'forcasts': forcasts}
-        data.append(city_map)
-    
-    return data
+            city_groups[city]['forecasts'].append(forecast_item)
 
+        # 最後只回傳字典裡的 values 部分（轉成 list）
+        return list(city_groups.values())

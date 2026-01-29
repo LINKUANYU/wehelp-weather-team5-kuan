@@ -15,6 +15,7 @@ def start_scheduler():
     
     scheduler.start()
     print("⏰ 排程器已啟動：每天 06:00 與 18:00 更新天氣")
+    
 
 def shutdown_scheduler():
     scheduler.shutdown()

@@ -41,6 +41,6 @@ CREATE TABLE IF NOT EXISTS `weather_forecasts` (
     CONSTRAINT `fk_forecast_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
 
     -- 重要：建立唯一索引，這是實現 ON DUPLICATE KEY UPDATE 的關鍵
-    -- 同一個地點在同一個時段內，只會有一筆資料
-    UNIQUE KEY `idx_location_time_range` (`location_id`, `start_time`, `end_time`)
+    -- 同一個地點在同一結束時間，只會有一筆資料
+    UNIQUE KEY `idx_location_endtime` (`location_id`, `end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

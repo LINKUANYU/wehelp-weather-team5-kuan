@@ -95,20 +95,24 @@ def prase_and_save_to_db(row_data):
                 weather_code, rain_pro, min_temp, max_temp, comfort
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
+                start_time = VALUES(start_time),  -- 確保 start_time 也被更新 (6小時變12小時)
                 weather = VALUES(weather),
                 weather_code = VALUES(weather_code),
                 rain_pro = VALUES(rain_pro),
                 min_temp = VALUES(min_temp),
                 max_temp = VALUES(max_temp),
-                comfort = VALUES(comfort)
+                comfort = VALUES(comfort),
+                created_at = NOW()               -- 確保時間戳記更新，回給前端邏輯那邊排序才有效
         """
         cur.executemany(upsert_sql, all_forecast_records)
+        upsert_affected = cur.rowcount # 如果資料已存在且有內容更新：rowcount 為 2。
 
         # 3. 清理過期資料 (刪除 6 小時前就已經結束的預報，留一點點緩衝)
         cur.execute("DELETE FROM weather_forecasts WHERE end_time < NOW() - INTERVAL 6 HOUR")
-        
+        delete_affected = cur.rowcount
+
         conn.commit()
-        print(f"成功寫入 {cur.rowcount} 筆資料")
+        print(f"寫入影響 {upsert_affected} 列，刪除 {delete_affected} 列")
     except mysql.connector.Error as err:
         print(f"❌ MySQL 錯誤: {err}") 
     except Exception as e:

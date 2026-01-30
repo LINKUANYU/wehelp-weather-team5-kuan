@@ -1,5 +1,13 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger # 建議明確使用 Trigger 類別
+import zoneinfo
 from models.weather_sync import sync_weather_from_cwa
+
+# 1. 建立時區物件
+taipei_tz = zoneinfo('Asia/Taipei')
+
+# 2. 初始化排程器時就指定時區，這樣裡面的 cron 運算都會以台北為準
+scheduler = BackgroundScheduler(timezone=taipei_tz)
 
 # 建立一個全域的排程器實體
 scheduler = BackgroundScheduler()
@@ -9,7 +17,7 @@ def start_scheduler():
     scheduler.add_job(
         sync_weather_from_cwa, 
         'cron',            # 使用 cron 模式：它不像「每隔 5 分鐘執行一次」這種規律間隔（那是 Interval 模式），而是更像「農民曆」：你可以指定具體的日期、星期、小時或分鐘。
-        hour='*',       # 設定每1小時抓一次
+        hour='6,18',       # 設定每1小時抓一次
         minute='5'         # 設定非整點，避開尖峰
     )
     

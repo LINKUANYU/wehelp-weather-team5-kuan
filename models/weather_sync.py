@@ -22,6 +22,8 @@ import requests
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from service.utils import get_taipei_now
+from datetime import timedelta
 
 
 def sync_weather_from_cwa():
@@ -48,6 +50,8 @@ def prase_and_save_to_db(row_data):
     locations = row_data['records']['location']
     conn = cnxpool.get_connection()
     cur = conn.cursor(dictionary=True)
+    now_taipei = get_taipei_now()
+    print("現在台北時間： ", now_taipei)
     try:
         # 1. 先抓取目前的縣市對照表，避免在迴圈裡重複查 SQL
         cur.execute("SELECT id, city_name FROM locations")
@@ -86,14 +90,15 @@ def prase_and_save_to_db(row_data):
                     int(weather_map['MaxT'][i]['parameter']['parameterName']),
 
                     weather_map['CI'][i]['parameter']['parameterName'],
+                    now_taipei  # 使用台北時間
                 )
                 all_forecast_records.append(slot)
         # 2. 執行更新或插入
         upsert_sql = """
             INSERT INTO weather_forecasts (
                 location_id, start_time, end_time, weather,
-                weather_code, rain_pro, min_temp, max_temp, comfort
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                weather_code, rain_pro, min_temp, max_temp, comfort, created_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
                 start_time = VALUES(start_time),  -- 確保 start_time 也被更新 (6小時變12小時)
                 weather = VALUES(weather),
@@ -102,13 +107,16 @@ def prase_and_save_to_db(row_data):
                 min_temp = VALUES(min_temp),
                 max_temp = VALUES(max_temp),
                 comfort = VALUES(comfort),
-                created_at = NOW()               -- 確保時間戳記更新，回給前端邏輯那邊排序才有效
+                created_at = VALUES(created_at)  -- 確保時間戳記更新，回給前端邏輯那邊排序才有效
         """
         cur.executemany(upsert_sql, all_forecast_records)
         upsert_affected = cur.rowcount # 如果資料已存在且有內容更新：rowcount 為 2。
 
-        # 3. 清理過期資料 (刪除 6 小時前就已經結束的預報，留一點點緩衝)
-        cur.execute("DELETE FROM weather_forecasts WHERE end_time < NOW() - INTERVAL 6 HOUR")
+        # 3. 清理過期資料 (這裡也要改用 Python 計算時間)
+        # 刪除結束時間早於「台北現在時間減 6 小時」的資料
+        buffer_time = now_taipei - timedelta(hours=6)
+        delete_sql = "DELETE FROM weather_forecasts WHERE end_time < %s"
+        cur.execute(delete_sql, (buffer_time,))
         delete_affected = cur.rowcount
 
         conn.commit()

@@ -1,10 +1,12 @@
 from fastapi import *
+from service.utils import get_taipei_now
 
 
 class WeatherModel:
     @staticmethod
     def get_weather(cur):
         try:
+            now_taipei = get_taipei_now()
             # 使用 Window Function (ROW_NUMBER) 確保每個城市只取最新的 3 筆
             sql = """
                 WITH latest AS (
@@ -19,7 +21,7 @@ class WeatherModel:
                     FROM weather_forecasts f
                     JOIN locations l ON l.id = f.location_id
                     JOIN weather_types ti ON f.weather_code = ti.weather_code
-                    WHERE f.end_time > NOW() -- 只選擇還沒有過期的資料
+                    WHERE f.end_time > %s -- 只選擇還沒有過期的資料
                 ), 
                 middle AS (
                     SELECT * FROM latest WHERE last_rank = 1  -- 這裡不可有分號
@@ -36,9 +38,9 @@ class WeatherModel:
                 WHERE row_num <= 3 
                 ORDER BY city_id ASC, start_time ASC;
             """
-            cur.execute(sql)
+            cur.execute(sql, (now_taipei,))
             rows = cur.fetchall()
-
+            
             if not rows:
                 print("Warning: No weather data found. Check if sync is running.")
 

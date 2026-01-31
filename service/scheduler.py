@@ -8,9 +8,6 @@ taipei_tz = zoneinfo.ZoneInfo("Asia/Taipei")
 # 2. 初始化排程器時就指定時區，這樣裡面的 cron 運算都會以台北為準
 scheduler = BackgroundScheduler(timezone=taipei_tz)
 
-# 建立一個全域的排程器實體
-scheduler = BackgroundScheduler()
-
 def start_scheduler():
     # 加入任務
     scheduler.add_job(

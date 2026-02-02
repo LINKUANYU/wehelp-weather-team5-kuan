@@ -13,12 +13,12 @@ def start_scheduler():
     scheduler.add_job(
         sync_weather_from_cwa, 
         'cron',            # 使用 cron 模式：它不像「每隔 5 分鐘執行一次」這種規律間隔（那是 Interval 模式），而是更像「農民曆」：你可以指定具體的日期、星期、小時或分鐘。
-        hour='5,17',       # 改回台北時間06,18點抓資料，確保資料為12小時。
-        minute='55'         # 設定非整點，避開尖峰
+        hour='5,17',       # 氣象站12小時資料更新時間為05,17
+        minute='30'         # 設定非整點，避開尖峰
     )
     
     scheduler.start()
-    print("⏰ 排程器已啟動：每天 06:00 與 18:00 更新天氣")
+    print("⏰ 排程器已啟動：每天 05:30 與 17:30 更新天氣")
     
 
 def shutdown_scheduler():
